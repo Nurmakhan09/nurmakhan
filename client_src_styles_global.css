@@ -1,0 +1,203 @@
+:root{
+  --bg: #0b0f14;
+  --card: #0f1418;
+  --muted: #9aa6b2;
+  --accent: #4be0c1;
+  --accent-2: #6a7cff;
+  --glass: rgba(255,255,255,0.03);
+  --text: #e6eef3;
+  --shadow: 0 12px 30px rgba(2,6,23,0.7);
+  --radius: 16px;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --transition: 260ms cubic-bezier(.2,.9,.3,1);
+}
+
+/* Dark mode theme (swapped variables if enabled via data-theme) */
+[data-theme="dark"] {
+  --bg: #06080b;
+  --card: #0b0f14;
+  --muted: #9aa6b2;
+  --accent: #4be0c1;
+  --accent-2: #7c8cff;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body {
+  margin:0;
+  font-family: var(--font-sans);
+  color: var(--text);
+  background: linear-gradient(180deg, rgba(7,10,12,0.98) 0%, rgba(4,7,10,1) 100%);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow:hidden;
+}
+
+/* Living book container */
+.app {
+  width:100%;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  padding:30px;
+}
+
+/* Book shell — center piece */
+.book-shell {
+  width:1100px;
+  max-width:95%;
+  height:720px;
+  max-height:92%;
+  position:relative;
+  perspective:1600px;
+  transform-style:preserve-3d;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* subtle breathing motion to keep book alive */
+.book-shell .book {
+  width:100%;
+  height:100%;
+  transform-origin:center center;
+  transition: transform var(--transition);
+  animation: book-breathe 8s ease-in-out infinite;
+  display:grid;
+  grid-template-columns: 260px 1fr;
+  gap:0;
+}
+
+@keyframes book-breathe {
+  0% { transform: translateY(0px) rotateX(0.25deg); }
+  50% { transform: translateY(-6px) rotateX(-0.25deg); }
+  100% { transform: translateY(0px) rotateX(0.25deg); }
+}
+
+/* Cover (left) */
+.book-cover {
+  background: linear-gradient(135deg, var(--card), rgba(20,20,24,0.7));
+  border-radius: 12px;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  box-shadow: var(--shadow);
+  position:relative;
+  transform-origin: left center;
+  will-change: transform;
+}
+
+/* Locked overlay for login */
+.lock-overlay {
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:auto;
+}
+
+/* Right pane (pages) */
+.book-pages {
+  position:relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: 12px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  box-shadow: var(--shadow);
+}
+
+/* Page container */
+.page {
+  width:100%;
+  height:100%;
+  background: linear-gradient(180deg, #0c1114 0%, #0b0d10 100%);
+  border-radius:12px;
+  color:var(--text);
+  padding:40px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  position:relative;
+  transform-origin: left center;
+  transition: transform 480ms cubic-bezier(.2,.9,.3,1), box-shadow 240ms;
+}
+
+/* Page-turn animation helper classes */
+.page.turning {
+  transform: rotateY(-18deg) translateX(-10px);
+  box-shadow: 0 30px 80px rgba(2,6,23,0.85);
+}
+
+/* Micro interactions */
+.button {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.04);
+  color:var(--text);
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+}
+.button:hover { transform: translateY(-4px); }
+.button:active { transform: translateY(-1px) scale(0.995); }
+
+/* Clock/Pomodoro — always visible in top-right */
+.top-right-ui {
+  position:absolute;
+  right:18px;
+  top:18px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  z-index:40;
+}
+
+/* Small translucent panel */
+.panel {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: 10px;
+  padding:10px;
+  border: 1px solid rgba(255,255,255,0.03);
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+/* Focus mode reduces chrome */
+[data-focus="true"] .book-cover,
+[data-focus="true"] .book-pages {
+  transform: scale(0.98);
+  filter: blur(0.0);
+  opacity: 0.98;
+}
+
+/* Minimal sidebar for shortcuts inside left cover */
+.shortcuts {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  overflow:auto;
+  padding-right:6px;
+}
+
+/* Drawing canvas styles */
+.canvas {
+  border-radius:10px;
+  background:rgba(255,255,255,0.01);
+  border:1px dashed rgba(255,255,255,0.02);
+  flex:1;
+  height:320px;
+}
+
+/* Responsive adjustments */
+@media (max-width:900px) {
+  .book-shell { height:90vh; }
+  .book { grid-template-columns: 160px 1fr; }
+}
